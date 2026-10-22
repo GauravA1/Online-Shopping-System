@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Manage Orders{% endblock %}
+{% block content %}
+<section class="admin-section">
+    <div class="admin-header">
+        <h1 class="page-title"><i class="fas fa-shopping-bag"></i> Manage Orders</h1>
+        <div class="admin-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-tab"><i class="fas fa-chart-bar"></i> Overview</a>
+            <a href="{{ url_for('admin_products') }}" class="admin-tab"><i class="fas fa-box"></i> Products</a>
+            <a href="{{ url_for('admin_orders') }}" class="admin-tab active"><i class="fas fa-shopping-bag"></i> Orders</a>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <h3><i class="fas fa-list"></i> All Orders ({{ orders|length }})</h3>
+        {% if orders %}
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>#{{ order.id }}</strong></td>
+                        <td>{{ order.full_name }}<br><small style="color:var(--text-muted);">@{{ order.username }}</small></td>
+                        <td>{{ order.item_count }}</td>
+                        <td>₹{{ "%.2f"|format(order.total_amount) }}</td>
+                        <td><span class="order-status status-{{ order.status }}">{{ order.status|capitalize }}</span></td>
+                        <td>{{ order.created_at.strftime('%d %b %Y') if order.created_at else 'N/A' }}</td>
+                        <td>
+                            <form action="{{ url_for('admin_update_order_status', order_id=order.id) }}" method="POST" class="status-form">
+                                <select name="status" onchange="this.form.submit()">
+                                    {% for s in ['pending','confirmed','shipped','delivered','cancelled'] %}
+                                    <option value="{{ s }}" {% if order.status == s %}selected{% endif %}>{{ s|capitalize }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color:var(--text-muted); text-align:center; padding:2rem;">No orders placed yet.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
