@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+shop.db
+.env
+venv/
+env/
+*.log
+Online_Shopping_System_Presentation.pptx
+create_ppt.py
