@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<section class="order-detail-section">
+    <a href="{{ url_for('orders') }}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+    <div class="order-detail-card">
+        <div class="order-detail-header">
+            <div>
+                <h1>Order #{{ order.id }}</h1>
+                <p class="order-date"><i class="fas fa-calendar"></i> {{ order.created_at.strftime('%d %b %Y, %I:%M %p') if order.created_at else 'N/A' }}</p>
+            </div>
+            <span class="order-status status-{{ order.status }} large">{{ order.status|capitalize }}</span>
+        </div>
+
+        <div class="order-detail-body">
+            <h3>Items Ordered</h3>
+            <div class="order-items-list">
+                {% for item in items %}
+                <div class="order-item-row">
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                    <div class="order-item-info">
+                        <p class="item-name">{{ item.name }}</p>
+                        <p class="item-qty">Quantity: {{ item.quantity }}</p>
+                    </div>
+                    <p class="item-price">₹{{ "%.2f"|format(item.price * item.quantity) }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="order-detail-footer">
+                <div class="shipping-info">
+                    <h4><i class="fas fa-map-marker-alt"></i> Shipping Address</h4>
+                    <p>{{ order.shipping_address }}</p>
+                </div>
+                <div class="order-total-box">
+                    <h4>Order Total</h4>
+                    <p class="grand-total">₹{{ "%.2f"|format(order.total_amount) }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
