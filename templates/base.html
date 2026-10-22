@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShopVerse{% endblock %} — Online Shopping</title>
+    <meta name="description" content="ShopVerse — Your premium online shopping destination for electronics, clothing, books and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-logo">
+                <i class="fas fa-bolt"></i> ShopVerse
+            </a>
+
+            <div class="nav-search">
+                <form action="{{ url_for('home') }}" method="GET" id="searchForm">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="search" placeholder="Search products..." value="{{ search_query if search_query else '' }}">
+                </form>
+            </div>
+
+            <div class="nav-links">
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('home') }}" class="nav-link"><i class="fas fa-store"></i> Shop</a>
+                    <a href="{{ url_for('cart') }}" class="nav-link cart-link">
+                        <i class="fas fa-shopping-cart"></i> Cart
+                        {% if cart_count > 0 %}
+                            <span class="cart-badge">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{{ url_for('orders') }}" class="nav-link"><i class="fas fa-box"></i> Orders</a>
+                    {% if session.get('role') == 'admin' %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link admin-link"><i class="fas fa-cog"></i> Admin</a>
+                    {% endif %}
+                    <div class="nav-user">
+                        <span class="user-greeting"><i class="fas fa-user-circle"></i> {{ session.get('full_name', 'User') }}</span>
+                        <a href="{{ url_for('logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="{{ url_for('register') }}" class="btn-register"><i class="fas fa-user-plus"></i> Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        <span>{{ message }}</span>
+                        <button onclick="this.parentElement.remove()" class="flash-close">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3><i class="fas fa-bolt"></i> ShopVerse</h3>
+                <p>Your premium online shopping destination.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <a href="{{ url_for('home') }}">Shop</a>
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            </div>
+            <div class="footer-links">
+                <h4>Categories</h4>
+                <a href="?category=1">Electronics</a>
+                <a href="?category=2">Clothing</a>
+                <a href="?category=3">Books</a>
+            </div>
+            <div class="footer-links">
+                <h4>Project Info</h4>
+                <p style="color: var(--text-muted); font-size:0.85rem;">Built with Flask + MySQL<br>Database Connectivity Project</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ShopVerse — Online Shopping System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Auto-dismiss flash messages
+        setTimeout(() => {
+            document.querySelectorAll('.flash').forEach(el => {
+                el.style.animation = 'slideUp 0.3s ease forwards';
+                setTimeout(() => el.remove(), 300);
+            });
+        }, 4000);
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
