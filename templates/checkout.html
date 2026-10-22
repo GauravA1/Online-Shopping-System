@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<section class="checkout-section">
+    <h1 class="page-title"><i class="fas fa-credit-card"></i> Checkout</h1>
+    <div class="checkout-layout">
+        <div class="checkout-form-area">
+            <h3>Shipping Details</h3>
+            <form method="POST" class="checkout-form">
+                <div class="form-group">
+                    <label for="shipping_address"><i class="fas fa-map-marker-alt"></i> Shipping Address</label>
+                    <textarea id="shipping_address" name="shipping_address" rows="4"
+                        placeholder="Enter your full shipping address (House No, Street, City, State, PIN Code)" required></textarea>
+                </div>
+                <h3 style="margin-top:1.5rem;">Order Items</h3>
+                <div class="checkout-items">
+                    {% for item in items %}
+                    <div class="checkout-item">
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                        <div>
+                            <p class="item-name">{{ item.name }}</p>
+                            <p class="item-qty">Qty: {{ item.quantity }}</p>
+                        </div>
+                        <p class="item-price">₹{{ "%.2f"|format(item.price * item.quantity) }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn-place-order">
+                    <i class="fas fa-check-circle"></i> Place Order — ₹{{ "%.2f"|format(total) }}
+                </button>
+            </form>
+        </div>
+        <div class="cart-summary">
+            <h3>Payment Summary</h3>
+            <div class="summary-row"><span>Subtotal</span><span>₹{{ "%.2f"|format(total) }}</span></div>
+            <div class="summary-row"><span>Shipping</span><span class="free-shipping">FREE</span></div>
+            <div class="summary-row"><span>Tax</span><span>₹0.00</span></div>
+            <hr>
+            <div class="summary-row total-row"><span>Total</span><span>₹{{ "%.2f"|format(total) }}</span></div>
+            <div class="payment-methods">
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:1rem;">
+                    <i class="fas fa-shield-alt"></i> Secure checkout — Cash on Delivery
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
